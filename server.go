@@ -24,6 +24,7 @@ func main() {
 	fmt.Println(*p)
 
 	fmt.Println(do())
+	fmt.Println(do())
 }
 
 func do() int {
