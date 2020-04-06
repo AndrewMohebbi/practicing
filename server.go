@@ -23,8 +23,11 @@ func main() {
 	fmt.Println(p.Speak())
 	fmt.Println(*p)
 
+	//Do the concurrency stuff
 	fmt.Println(do())
-	fmt.Println(do())
+
+	//Do the defer, pnaic and recover stuff
+	doToo()
 }
 
 func do() int {
@@ -45,11 +48,28 @@ func adder(ch chan int, sum *int) {
 	mutex.Lock()
 
 	for i := 0; i < 10000; i++ {
-		*sum += 1
+		*sum++
 	}
 
 	mutex.Unlock()
 
 	ch <- 0 //Tell do() that you're done
 	return
+}
+
+func doToo() {
+	defer fmt.Println("print last")
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered!", r)
+		}
+	}()
+
+	doPanic()
+
+	fmt.Println("print first")
+}
+
+func doPanic() {
+	panic(fmt.Sprintf("aaaarrgggg"))
 }
