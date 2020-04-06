@@ -4,6 +4,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
+	"net/http"
 	"practicing/functions"
 	"practicing/pelicans"
 	"sync"
@@ -26,8 +28,36 @@ func main() {
 	//Do the concurrency stuff
 	fmt.Println(do())
 
-	//Do the defer, pnaic and recover stuff
+	//Do the defer, panic and recover stuff
 	doToo()
+
+	//Here we go, the actual server stuff
+	http.HandleFunc("/", myHandler)
+	http.Handle("/lol/", logWrapper(myHandler))
+	http.HandleFunc("/poop/", logWrapper2(myHandler))
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe:", err)
+	}
+}
+
+func myHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "I love %s!", r.URL.Path[1:])
+}
+
+func logWrapper(h func(w http.ResponseWriter, r *http.Request)) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("We got a funny guy")
+		h2 := http.HandlerFunc(h)
+		h2.ServeHTTP(w, r)
+	})
+}
+
+func logWrapper2(h func(w http.ResponseWriter, r *http.Request)) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println("We got a sad guy")
+		h(w, r)
+	}
 }
 
 func do() int {
