@@ -4,11 +4,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"practicing/functions"
 )
 
-var optional = flag.String("optional", "Hello!", "Tell what to print")
+var optional = flag.String("opt", "Hello!", "Tell what to print")
 
 func main() {
 	flag.Parse()
-	fmt.Println(*optional)
+	fmt.Println(functions.Flip(*optional))
 }
