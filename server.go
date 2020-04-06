@@ -2,9 +2,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 )
 
+var optional = flag.String("optional", "Hello!", "Tell what to print")
+
 func main() {
-	fmt.Println("Hello!")
+	flag.Parse()
+	fmt.Println(*optional)
 }
